@@ -1,14 +1,6 @@
-# Redirection vers index.php pour gérer toutes les requêtes
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.php [QSA,L]
-
-# Sécuriser l'accès aux fichiers sensibles
-<Files .env>
-  Order Deny,Allow
-  Deny from all
-</Files>
-
-# Désactiver l'affichage des erreurs
-php_flag display_errors off
+<IfModule mod_rewrite.c>
+  Options -Multiviews
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>
