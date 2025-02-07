@@ -7,10 +7,20 @@ $router->addRoute('POST', '/login', 'front\AuthController', 'processLogin'); // 
 $router->addRoute('GET', '/sign-up', 'front\AuthController', 'signUp'); // Page d'inscription
 $router->addRoute('POST', '/sign-up', 'front\AuthController', 'processSignUp'); // Traitement de l'inscription
 
-// Définition des routes pour le Back Office (Admin)
-$router->addRoute('GET', '/admin/dashboard', 'back\DashboardController', 'index'); // Dashboard Admin
-$router->addRoute('GET', '/admin/users', 'back\UserController', 'index'); // Gestion des utilisateurs
-$router->addRoute('GET', '/admin/articles', 'back\ArticleController', 'index'); // Gestion des articles
+// Route pour la page des articles
+$router->addRoute('GET', '/article', 'front\ArticleController', 'index');
+
+// Exemple de route pour le tableau de bord
+$router->addRoute('GET', '/dashboard', 'back\DashboardController', 'index'); // Affichage des articles
+$router->addRoute('POST', '/dashboard', 'back\DashboardController', 'create'); // Ajouter un article
+
+$router->addRoute('GET', '/dashboard/update/{id}', 'back\DashboardController', 'edit');  // Afficher le formulaire de modification
+$router->addRoute('POST', '/dashboard/update/{id}', 'back\DashboardController', 'updateArticle');  // Traiter la mise à jour
+
+
+// Supprimer un article
+$router->addRoute('GET', '/dashboard/delete/{id}', 'back\DashboardController', 'delete'); // Supprimer un article
 
 // Route pour la déconnexion
 $router->addRoute('GET', '/logout', 'front\AuthController', 'logout'); // Déconnexion
+
