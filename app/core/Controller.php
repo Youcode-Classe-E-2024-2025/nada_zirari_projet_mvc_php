@@ -2,21 +2,17 @@
 
 namespace App\Core;
 
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
-
 class Controller
 {
-    protected Environment $twig;
+    protected $view;
 
     public function __construct()
     {
-        $loader = new FilesystemLoader(dirname(__DIR__) . '/views');
-        $this->twig = new Environment($loader);
+        $this->view = new View();
     }
 
-    protected function render(string $view, array $data = [])
+    public function render($viewName, $data = [])
     {
-        echo $this->twig->render($view . '.twig', $data);
+        $this->view->render($viewName, $data);
     }
 }

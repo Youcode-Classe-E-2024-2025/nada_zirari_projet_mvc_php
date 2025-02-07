@@ -1,7 +1,8 @@
 <?php
+
 namespace App\Core;
 
-use App\Core\Database;
+use PDO;
 
 class Model
 {
@@ -9,13 +10,29 @@ class Model
 
     public function __construct()
     {
-        $this->db = new Database();
+        // Connexion à la base de données via PDO
+        $this->db = Database::getInstance()->getConnection();
     }
 
-    public function query($sql, $params = [])
+    // Méthode pour exécuter une requête SQL sans retour
+    protected function executeQuery($sql, $params = [])
     {
-        $stmt = $this->db->connect()->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll();
+        return $stmt;
+    }
+
+    // Méthode pour récupérer une seule ligne (ex: un utilisateur par son email)
+    protected function fetchOne($sql, $params = [])
+    {
+        $stmt = $this->executeQuery($sql, $params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Méthode pour récupérer plusieurs lignes (ex: articles)
+    protected function fetchAll($sql, $params = [])
+    {
+        $stmt = $this->executeQuery($sql, $params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -2,22 +2,41 @@
 namespace App\Core;
 
 use PDO;
+use PDOException;
 
-class Database
-{
-    private $host = 'localhost';
-    private $db   = 'nom_base';
-    private $user = 'utilisateur';
-    private $pass = 'motdepasse';
-    private $charset = 'utf8';
+class Database {
+    private static $instance = null;
+    private $connection;
 
-    public function connect()
-    {
-        $dsn = "pgsql:host=$this->host;dbname=$this->db;charset=$this->charset";
+    private function __construct() {
         try {
-            return new PDO($dsn, $this->user, $this->pass);
-        } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            // Vérifier si les variables d'environnement sont définies
+            if (!isset($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASS'])) {
+                die('Database configuration missing in .env');
+            }
+
+            $this->connection = new PDO(
+                "pgsql:host=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'],
+                $_ENV['DB_USER'],
+                $_ENV['DB_PASS'],
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ]
+            );
+        } catch (PDOException $e) {
+            die("Database connection failed: " . $e->getMessage());
         }
+    }
+
+    public static function getInstance(): self {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection(): PDO {
+        return $this->connection;
     }
 }
