@@ -1,45 +1,25 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// Autoloading des classes
+require_once '../vendor/autoload.php';
 
-use App\Core\Router;
-use App\Core\Security;
-use App\Core\Logger;
+// Chargement des fichiers de configuration
+require_once '../app/config/config.php';
 
-// Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+// Démarrer la session
+session_start();
+
+use Dotenv\Dotenv;
+
+// Charger le fichier .env
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-// Initialize error handling
-ini_set('display_errors', $_ENV['APP_DEBUG'] === 'true' ? '1' : '0');
-error_reporting(E_ALL);
+// Instanciation du routeur
+$router = new App\Core\Router();
 
-// Initialize logger
-$logger = new Logger();
+// Chargement des routes (nous allons ajouter ici les routes définies dans routes.php)
+require_once '../app/config/routes.php';
 
-// Set up secure session
-Security::setupSecureSession();
-
-// Initialize router
-$router = new Router();
-
-// Register routes
-require_once __DIR__ . '/../app/routes.php';
-
-try {
-    // Dispatch the request
-    echo $router->dispatch();
-} catch (Exception $e) {
-    $logger->error($e->getMessage(), [
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
-    ]);
-    
-    if ($_ENV['APP_DEBUG'] === 'true') {
-        throw $e;
-    } else {
-        http_response_code(500);
-        echo 'An error occurred. Please try again later.';
-    }
-}
+// Dispatch de la requête
+$router->dispatch($_SERVER['REQUEST_URI']);

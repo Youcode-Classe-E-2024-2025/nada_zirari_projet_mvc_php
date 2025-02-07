@@ -3,58 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page d'accueil</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Gestion des Articles</title>
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Inclusion de Tailwind CSS via CDN -->
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gradient-to-b from-gray-800 to-black text-white font-sans">
 
-    <!-- Navbar -->
-    <nav class="bg-indigo-600 p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="{{ path('home') }}" class="text-white text-xl font-bold">MonSite</a>
-            <div>
-                <a href="login.twig" class="text-white px-4 py-2 hover:bg-indigo-700 rounded">Se connecter</a>
-                <a href="signup.twig" class="text-white px-4 py-2 hover:bg-indigo-700 rounded">S'inscrire</a>
-            </div>
+    <!-- Header -->
+    <header class="flex justify-between items-center p-6 bg-gray-900">
+        <!-- Logo -->
+        <div class="text-white text-xl font-semibold">
+            <a href="home.twig" class="text-yellow-400">Article</a> <!-- Remplacez MonLogo par l'image ou le texte de votre logo -->
         </div>
-    </nav>
+        
+        <!-- Menu de connexion -->
+        <div class="flex space-x-6">
+            <a href="signUp.twig" class="text-yellow-400 hover:underline">Sign Up</a>
+            <a href="login.twig" class="text-yellow-400 hover:underline">Login</a>
+        </div>
+    </header>
 
-    <!-- Hero Section -->
-    <section class="bg-indigo-600 text-white py-20">
-        <div class="container mx-auto text-center">
-            <h1 class="text-4xl font-bold mb-4">Bienvenue sur MonSite !</h1>
-            <p class="text-lg mb-8">Découvrez des fonctionnalités incroyables et une expérience unique en ligne.</p>
-            <a href="{{ path('signup') }}" class="bg-indigo-700 hover:bg-indigo-800 text-white py-3 px-6 rounded-lg text-lg">Commencez maintenant</a>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto text-center">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8">Fonctionnalités</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-                <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Facilité d'utilisation</h3>
-                    <p class="text-gray-600">Une interface simple et claire pour vous permettre de naviguer sans effort.</p>
-                </div>
-                <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Sécurisé et rapide</h3>
-                    <p class="text-gray-600">Des fonctionnalités de sécurité avancées pour une expérience sans soucis.</p>
-                </div>
-                <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Support dédié</h3>
-                    <p class="text-gray-600">Une équipe prête à répondre à toutes vos questions et préoccupations.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 MonSite. Tous droits réservés.</p>
-        </div>
-    </footer>
+    <!-- Titre principal centré -->
+    <div class="flex items-center justify-center h-screen">
+        <h1 class="text-5xl font-bold text-center">Gestion des Articles</h1>
+    </div>
 
 </body>
 </html>
