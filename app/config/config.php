@@ -1,13 +1,5 @@
 <?php
-
-return [
-    'db' => [
-        'host' => 'localhost',
-        'port' => '5432',
-        'name' => 'mvc_database',
-        'user' => 'mvc_user',
-        'password' => 'securepassword',
-        'charset' => 'utf8'
-    ],
-    'debug' => true
-];
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'article');
+define('DB_USER', 'postgres');
+define('DB_PASS', '1234');
