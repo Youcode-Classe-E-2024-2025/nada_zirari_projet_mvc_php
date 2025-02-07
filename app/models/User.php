@@ -3,39 +3,37 @@
 namespace App\Models;
 
 use App\Core\Model;
-use PDO;
 
 class User extends Model
 {
-    // Attributs utilisateur
+    // Propriétés privées
     private $id;
-    private $username;
+    private $name;
     private $email;
     private $password;
-    private $role;
 
-    // Getter pour l'ID
+    // Getter pour l'id
     public function getId()
     {
         return $this->id;
     }
 
-    // Setter pour l'ID
+    // Setter pour l'id
     public function setId($id)
     {
         $this->id = $id;
     }
 
-    // Getter pour le nom d'utilisateur
-    public function getUsername()
+    // Getter pour le nom
+    public function getName()
     {
-        return $this->username;
+        return $this->name;
     }
 
-    // Setter pour le nom d'utilisateur
-    public function setUsername($username)
+    // Setter pour le nom
+    public function setName($name)
     {
-        $this->username = $username;
+        $this->name = $name;
     }
 
     // Getter pour l'email
@@ -62,56 +60,47 @@ class User extends Model
         $this->password = $password;
     }
 
-    // Getter pour le rôle
-    public function getRole()
+    // Vérifie si l'email existe déjà
+    public function emailExists($email)
     {
-        return $this->role;
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+        $stmt->bindValue(":email", $email);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
     }
 
-    // Setter pour le rôle
-    public function setRole($role)
+    // Ajoute un nouvel utilisateur dans la base de données
+    public function addUser($name, $email, $password)
     {
-        $this->role = $role;
-    }
+        // Hachage du mot de passe
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Méthode pour enregistrer un utilisateur
-    public function createUser($username, $email, $password)
-    {
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT); // Hash du mot de passe
-        $sql = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':username', $username);
-        $stmt->bindValue(':email', $email);
-        $stmt->bindValue(':password', $passwordHash);
+        // Préparation de la requête SQL pour insérer l'utilisateur
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+        $stmt->bindValue(":name", $name);
+        $stmt->bindValue(":email", $email);
+        $stmt->bindValue(":password", $hashedPassword);
 
+        // Exécution de la requête
         return $stmt->execute();
     }
 
-    // Méthode pour récupérer un utilisateur par son email
+    // Récupère un utilisateur par son email
     public function getUserByEmail($email)
     {
-        $sql = "SELECT * FROM users WHERE email = :email";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':email', $email);
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->bindValue(":email", $email);
         $stmt->execute();
+        $user = $stmt->fetch();  // Cela retourne un objet, pas un tableau
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $this->setId($result['id']);
-            $this->setUsername($result['username']);
-            $this->setEmail($result['email']);
-            $this->setPassword($result['password']);
-            $this->setRole($result['role']);
+        if ($user) {
+            $this->setId($user->id);           // Accès à l'objet avec "->" au lieu de "[]"
+            $this->setName($user->name);
+            $this->setEmail($user->email);
+            $this->setPassword($user->password);
         }
 
-        return $result;
-    }
-
-    // Méthode pour vérifier le mot de passe d'un utilisateur
-    public function verifyPassword($password, $hashedPassword)
-    {
-        return password_verify($password, $hashedPassword);
+        return $user;
     }
 }
+
