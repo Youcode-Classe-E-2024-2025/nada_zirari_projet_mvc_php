@@ -2,128 +2,145 @@
 
 namespace App\Models;
 
-use App\Core\Model;
-use PDO;
+use App\Core\Model; // Assurez-vous que la classe Model est bien importée pour hériter de la classe de base
 
 class Article extends Model
 {
-    // Attributs de l'article
+    // Propriétés privées
     private $id;
     private $title;
-    private $description;
+    private $content;
+    private $author_id;
     private $created_at;
+    private $updated_at;
 
-    // Getter pour l'ID
+    // Getter et Setter pour l'id
     public function getId()
     {
         return $this->id;
     }
 
-    // Setter pour l'ID
     public function setId($id)
     {
         $this->id = $id;
     }
 
-    // Getter pour le titre
+    // Getter et Setter pour le titre de l'article
     public function getTitle()
     {
         return $this->title;
     }
 
-    // Setter pour le titre
     public function setTitle($title)
     {
         $this->title = $title;
     }
 
-    // Getter pour la description
-    public function getDescription()
+    // Getter et Setter pour le contenu de l'article
+    public function getContent()
     {
-        return $this->description;
+        return $this->content;
     }
 
-    // Setter pour la description
-    public function setDescription($description)
+    public function setContent($content)
     {
-        $this->description = $description;
+        $this->content = $content;
     }
 
-    // Getter pour la date de création
+    // Getter et Setter pour l'ID de l'auteur
+    public function getAuthorId()
+    {
+        return $this->author_id;
+    }
+
+    public function setAuthorId($author_id)
+    {
+        $this->author_id = $author_id;
+    }
+
+    // Getter et Setter pour la date de création
     public function getCreatedAt()
     {
         return $this->created_at;
     }
 
-    // Setter pour la date de création
     public function setCreatedAt($created_at)
     {
         $this->created_at = $created_at;
     }
 
-    // Méthode pour ajouter un article
-    public function createArticle($title, $description)
+    // Getter et Setter pour la date de mise à jour
+    public function getUpdatedAt()
     {
-        $sql = "INSERT INTO articles (title, description, created_at) VALUES (:title, :description, NOW())";
+        return $this->updated_at;
+    }
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':title', $title);
-        $stmt->bindValue(':description', $description);
-
-        return $stmt->execute();
+    public function setUpdatedAt($updated_at)
+    {
+        $this->updated_at = $updated_at;
     }
 
     // Méthode pour récupérer tous les articles
-    public function getAllArticles()
+    public function findAll()
     {
-        $sql = "SELECT * FROM articles ORDER BY created_at DESC";
+        // Préparer la requête SQL
+        $stmt = $this->db->prepare("SELECT * FROM articles");
+        $stmt->execute();
 
-        $stmt = $this->db->query($sql);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Retourner tous les articles sous forme de tableau associatif
+        return $stmt->fetchAll();
     }
 
     // Méthode pour récupérer un article par son ID
-    public function getArticleById($id)
+    public function find($id)
     {
-        $sql = "SELECT * FROM articles WHERE id = :id";
-
-        $stmt = $this->db->prepare($sql);
+        // Préparer la requête SQL pour récupérer un article spécifique
+        $stmt = $this->db->prepare("SELECT * FROM articles WHERE id = :id");
         $stmt->bindValue(':id', $id);
         $stmt->execute();
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $this->setId($result['id']);
-            $this->setTitle($result['title']);
-            $this->setDescription($result['description']);
-            $this->setCreatedAt($result['created_at']);
-        }
-
-        return $result;
+        // Si l'article est trouvé, retourner ses données sous forme de tableau associatif
+        return $stmt->fetch();
     }
 
-    // Méthode pour modifier un article
-    public function updateArticle($id, $title, $description)
+    // Méthode pour créer un nouvel article dans la base de données
+    public function create()
     {
-        $sql = "UPDATE articles SET title = :title, description = :description WHERE id = :id";
+        $stmt = $this->db->prepare("INSERT INTO articles (title, content, author_id, created_at, updated_at)
+                                    VALUES (:title, :content, :author_id, :created_at, :updated_at)");
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':id', $id);
-        $stmt->bindValue(':title', $title);
-        $stmt->bindValue(':description', $description);
+        // Bind des valeurs des propriétés de l'article
+        $stmt->bindValue(':title', $this->getTitle());
+        $stmt->bindValue(':content', $this->getContent());
+        $stmt->bindValue(':author_id', $this->getAuthorId());
+        $stmt->bindValue(':created_at', $this->getCreatedAt());
+        $stmt->bindValue(':updated_at', $this->getUpdatedAt());
 
+        // Exécution de la requête pour insérer l'article dans la base de données
         return $stmt->execute();
     }
 
-    // Méthode pour supprimer un article
-    public function deleteArticle($id)
+    // Méthode pour mettre à jour un article existant dans la base de données
+    public function update()
     {
-        $sql = "DELETE FROM articles WHERE id = :id";
+        $stmt = $this->db->prepare("UPDATE articles SET title = :title, content = :content, updated_at = :updated_at WHERE id = :id");
+    
+        // Bind des valeurs des propriétés de l'article
+        $stmt->bindValue(':title', $this->getTitle());
+        $stmt->bindValue(':content', $this->getContent());
+        $stmt->bindValue(':updated_at', $this->getUpdatedAt());
+        $stmt->bindValue(':id', $this->getId());
+    
+        // Exécution de la requête pour mettre à jour l'article dans la base de données
+        return $stmt->execute();
+    }
+    
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':id', $id);
-
+    // Méthode pour supprimer un article de la base de données
+    public function delete()
+    {
+        $stmt = $this->db->prepare("DELETE FROM articles WHERE id = :id");
+        $stmt->bindValue(':id', $this->getId());
         return $stmt->execute();
     }
 }
